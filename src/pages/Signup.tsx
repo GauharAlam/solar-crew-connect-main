@@ -1,3 +1,4 @@
+// src/pages/Signup.tsx
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -6,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+// REMOVED: import { supabase } from "@/integrations/supabase/client"; // <-- This line is removed
+
+// Define your backend API URL
+const API_URL = 'http://localhost:5001/api'; // Or your backend's URL
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -21,35 +25,47 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
 
+    if (!userType) {
+        toast({
+            title: "Account Type Required",
+            description: "Please select an account type.",
+            variant: "destructive",
+        });
+        setLoading(false);
+        return;
+    }
+
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            user_type: userType,
-          },
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          fullName,
+          email,
+          password,
+          userType,
+        }),
       });
 
-      if (error) {
-        toast({
-          title: "Signup Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else if (data.user) {
-        toast({
-          title: "Account Created!",
-          description: "Please check your email to verify your account.",
-        });
-        navigate("/login");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
-    } catch (error) {
+
       toast({
-        title: "Error",
-        description: "An unexpected error occurred.",
+        title: "Account Created!",
+        description: "You can now log in.",
+      });
+      navigate("/login");
+
+    } catch (error: any) {
+      console.error("Signup failed:", error);
+      toast({
+        title: "Signup Failed",
+        description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
     } finally {
@@ -57,6 +73,7 @@ export default function Signup() {
     }
   };
 
+  // ... rest of the component (return statement with JSX) remains the same
   return (
     <div className="min-h-screen bg-background pt-16 flex items-center justify-center px-4">
       <Card className="w-full max-w-md">
@@ -66,6 +83,7 @@ export default function Signup() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignup} className="space-y-4">
+            {/* Full Name Input */}
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name</Label>
               <Input
@@ -76,6 +94,7 @@ export default function Signup() {
                 required
               />
             </div>
+            {/* Email Input */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -87,6 +106,7 @@ export default function Signup() {
                 required
               />
             </div>
+            {/* Password Input */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -95,25 +115,30 @@ export default function Signup() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create a password"
+                minLength={6} // Optional: Add password requirements
                 required
               />
             </div>
+            {/* User Type Select */}
             <div className="space-y-2">
               <Label htmlFor="userType">Account Type</Label>
               <Select value={userType} onValueChange={setUserType} required>
-                <SelectTrigger>
+                <SelectTrigger id="userType">
                   <SelectValue placeholder="Select account type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="epc_company">EPC Company</SelectItem>
                   <SelectItem value="engineer">Engineer/Freelancer</SelectItem>
+                  {/* Add other types if necessary */}
                 </SelectContent>
               </Select>
             </div>
+            {/* Submit Button */}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"}
             </Button>
           </form>
+          {/* Link to Login */}
           <div className="mt-4 text-center">
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}
