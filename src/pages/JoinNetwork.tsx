@@ -1,21 +1,22 @@
+// src/pages/JoinNetwork.tsx
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// Removed Select imports as we are using standard select for simplicity with FormData
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { 
-  CheckCircle, 
-  Users, 
-  DollarSign, 
-  Star, 
-  Briefcase,
-  Award,
-  TrendingUp
+import { useToast } from "@/hooks/use-toast";
+import {
+  CheckCircle, Users, DollarSign, Star, Briefcase, Award, TrendingUp
 } from "lucide-react";
 
+// Define your backend API URL
+const API_URL = 'http://localhost:5001/api'; // Make sure this is correct
+
 const benefits = [
+  // ... benefits array ...
   {
     icon: DollarSign,
     title: "Competitive Rates",
@@ -39,6 +40,7 @@ const benefits = [
 ];
 
 const steps = [
+  // ... steps array ...
   "Complete your professional profile",
   "Upload certifications and portfolio",
   "Get verified by our team",
@@ -46,6 +48,89 @@ const steps = [
 ];
 
 export default function JoinNetwork() {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const formValues = Object.fromEntries(formData.entries());
+
+    // --- Prepare the data object EXACTLY matching backend schema ---
+    // Ensure keys here match your Mongoose EngineerProfile schema field names
+    const profileData = {
+      firstName: formValues.firstName as string || '',
+      lastName: formValues.lastName as string || '',
+      email: formValues.email as string || '',
+      phone: formValues.phone as string || undefined, // Optional field
+      company: formValues.company as string || undefined, // Optional field
+      serviceType: formValues.serviceType as string || '',
+      experience: formValues.experience as string || '',
+      location: formValues.location as string || '',
+      // Assuming specialties is a textarea where user lists items, comma-separated
+      specialties: (formValues.specialties as string || '').split(',').map(s => s.trim()).filter(s => s),
+      termsAgreed: formValues.terms === 'on', // Checkbox value is 'on' when checked
+      marketingOptIn: formValues.marketing === 'on',
+      // Add defaults or other fields from your schema if needed here
+      // e.g., avatar_url: '', bio: '', certifications: [], etc.
+    };
+    // --- End data preparation ---
+
+
+    console.log("Sending data to backend:", JSON.stringify(profileData, null, 2)); // Log what's being sent
+
+    // Basic frontend validation example
+    if (!profileData.email || !profileData.firstName || !profileData.lastName || !profileData.termsAgreed) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields (Name, Email) and agree to the terms.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/engineers/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // If '/join' becomes protected, add Authorization header here
+          // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify(profileData), // Send the prepared data
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Display specific error from backend if available
+        throw new Error(result.message || `Form submission failed. Status: ${response.status}`);
+      }
+
+      toast({
+        title: "Application Submitted!",
+        description: "Thank you for joining. We'll review your profile.",
+      });
+      e.currentTarget.reset(); // Clear the form on success
+
+
+    } catch (error: any) {
+      console.error("Join network failed:", error);
+      toast({
+        title: "Submission Failed",
+        // Show the specific error message
+        description: error.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-background pt-16">
       <div className="container mx-auto px-4 py-8">
@@ -54,11 +139,12 @@ export default function JoinNetwork() {
           <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Join Our Network of Solar Professionals
           </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
-            Connect with top EPC companies, grow your business, and be part of the solar revolution. 
+           <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+            Connect with top EPC companies, grow your business, and be part of the solar revolution.
             Whether you're an I&C specialist, design engineer, or equipment provider, we have opportunities for you.
           </p>
-          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+          {/* ... stats ... */}
+           <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-primary" />
               500+ Active Professionals
@@ -74,9 +160,10 @@ export default function JoinNetwork() {
           </div>
         </div>
 
+
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left Column - Benefits & Process */}
-          <div>
+           <div>
             {/* Benefits */}
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-foreground mb-6">Why Join SolarConnect?</h2>
@@ -121,27 +208,27 @@ export default function JoinNetwork() {
               <p className="text-muted-foreground">Fill out your information to get started</p>
             </div>
 
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Info */}
               <div className="space-y-4">
                 <h3 className="font-semibold text-foreground">Personal Information</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="John" />
+                    <Input id="firstName" name="firstName" placeholder="John" required />
                   </div>
                   <div>
                     <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Doe" />
+                    <Input id="lastName" name="lastName" placeholder="Doe" required />
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" placeholder="john@example.com" />
+                  <Input id="email" name="email" type="email" placeholder="john@example.com" required />
                 </div>
                 <div>
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" type="tel" placeholder="+1 (555) 123-4567" />
+                  <Input id="phone" name="phone" type="tel" placeholder="+1 (555) 123-4567" />
                 </div>
               </div>
 
@@ -150,39 +237,31 @@ export default function JoinNetwork() {
                 <h3 className="font-semibold text-foreground">Professional Information</h3>
                 <div>
                   <Label htmlFor="serviceType">Service Type</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your service type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ic-team">I&C Team/Engineer</SelectItem>
-                      <SelectItem value="solar-design">Solar Design Engineer</SelectItem>
-                      <SelectItem value="equipment">Equipment Provider</SelectItem>
-                      <SelectItem value="consultant">Consultant</SelectItem>
-                    </SelectContent>
-                  </Select>
+                   <select name="serviceType" id="serviceType" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1" required>
+                      <option value="" disabled >Select your service type</option>
+                      <option value="ic-team">I&C Team/Engineer</option>
+                      <option value="solar-design">Solar Design Engineer</option>
+                      <option value="equipment">Equipment Provider</option>
+                      <option value="consultant">Consultant</option>
+                   </select>
                 </div>
                 <div>
                   <Label htmlFor="company">Company/Organization</Label>
-                  <Input id="company" placeholder="Your company name" />
+                  <Input id="company" name="company" placeholder="Your company name" />
                 </div>
-                <div>
+                 <div>
                   <Label htmlFor="experience">Years of Experience</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select experience level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="0-2">0-2 years</SelectItem>
-                      <SelectItem value="3-5">3-5 years</SelectItem>
-                      <SelectItem value="6-10">6-10 years</SelectItem>
-                      <SelectItem value="10+">10+ years</SelectItem>
-                    </SelectContent>
-                  </Select>
+                   <select name="experience" id="experience" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1" required>
+                      <option value="" disabled >Select experience level</option>
+                      <option value="0-2">0-2 years</option>
+                      <option value="3-5">3-5 years</option>
+                      <option value="6-10">6-10 years</option>
+                      <option value="10+">10+ years</option>
+                   </select>
                 </div>
                 <div>
                   <Label htmlFor="location">Location</Label>
-                  <Input id="location" placeholder="City, State" />
+                  <Input id="location" name="location" placeholder="City, State" required/>
                 </div>
               </div>
 
@@ -190,10 +269,11 @@ export default function JoinNetwork() {
               <div className="space-y-4">
                 <h3 className="font-semibold text-foreground">Additional Information</h3>
                 <div>
-                  <Label htmlFor="specialties">Specialties & Certifications</Label>
-                  <Textarea 
-                    id="specialties" 
-                    placeholder="List your key specialties, certifications, and areas of expertise..."
+                  <Label htmlFor="specialties">Specialties & Certifications (comma-separated)</Label>
+                  <Textarea
+                    id="specialties"
+                    name="specialties"
+                    placeholder="List your key specialties, certifications, e.g., SCADA, PVsyst, NABCEP"
                     className="h-24"
                   />
                 </div>
@@ -202,13 +282,13 @@ export default function JoinNetwork() {
               {/* Checkboxes */}
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="terms" />
+                  <Checkbox id="terms" name="terms" required />
                   <Label htmlFor="terms" className="text-sm">
                     I agree to the Terms of Service and Privacy Policy
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="marketing" />
+                  <Checkbox id="marketing" name="marketing" />
                   <Label htmlFor="marketing" className="text-sm">
                     I'd like to receive updates about new opportunities and platform features
                   </Label>
@@ -216,8 +296,8 @@ export default function JoinNetwork() {
               </div>
 
               {/* Submit */}
-              <Button type="submit" className="w-full" size="lg">
-                Join SolarConnect Network
+              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                 {loading ? 'Submitting...' : 'Join SolarConnect Network'}
               </Button>
             </form>
           </Card>
