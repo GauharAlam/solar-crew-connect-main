@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 // Removed Select imports as we are using standard select for simplicity with FormData
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast"; // Assuming this is your custom hook
 import {
   CheckCircle, Users, DollarSign, Star, Briefcase, Award, TrendingUp
 } from "lucide-react";
@@ -16,7 +16,6 @@ import {
 const API_URL = 'http://localhost:5001/api'; // Make sure this is correct
 
 const benefits = [
-  // ... benefits array ...
   {
     icon: DollarSign,
     title: "Competitive Rates",
@@ -40,7 +39,6 @@ const benefits = [
 ];
 
 const steps = [
-  // ... steps array ...
   "Complete your professional profile",
   "Upload certifications and portfolio",
   "Get verified by our team",
@@ -49,7 +47,7 @@ const steps = [
 
 export default function JoinNetwork() {
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const { toast } = useToast(); // Using your custom hook
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,27 +57,23 @@ export default function JoinNetwork() {
     const formValues = Object.fromEntries(formData.entries());
 
     // --- Prepare the data object EXACTLY matching backend schema ---
-    // Ensure keys here match your Mongoose EngineerProfile schema field names
     const profileData = {
       firstName: formValues.firstName as string || '',
       lastName: formValues.lastName as string || '',
       email: formValues.email as string || '',
-      phone: formValues.phone as string || undefined, // Optional field
-      company: formValues.company as string || undefined, // Optional field
+      phone: formValues.phone as string || undefined,
+      company: formValues.company as string || undefined,
       serviceType: formValues.serviceType as string || '',
       experience: formValues.experience as string || '',
       location: formValues.location as string || '',
-      // Assuming specialties is a textarea where user lists items, comma-separated
       specialties: (formValues.specialties as string || '').split(',').map(s => s.trim()).filter(s => s),
-      termsAgreed: formValues.terms === 'on', // Checkbox value is 'on' when checked
+      termsAgreed: formValues.terms === 'on',
       marketingOptIn: formValues.marketing === 'on',
-      // Add defaults or other fields from your schema if needed here
-      // e.g., avatar_url: '', bio: '', certifications: [], etc.
     };
     // --- End data preparation ---
 
 
-    console.log("Sending data to backend:", JSON.stringify(profileData, null, 2)); // Log what's being sent
+    console.log("Sending data to backend:", JSON.stringify(profileData, null, 2));
 
     // Basic frontend validation example
     if (!profileData.email || !profileData.firstName || !profileData.lastName || !profileData.termsAgreed) {
@@ -97,16 +91,13 @@ export default function JoinNetwork() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // If '/join' becomes protected, add Authorization header here
-          // 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         },
-        body: JSON.stringify(profileData), // Send the prepared data
+        body: JSON.stringify(profileData),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        // Display specific error from backend if available
         throw new Error(result.message || `Form submission failed. Status: ${response.status}`);
       }
 
@@ -114,14 +105,20 @@ export default function JoinNetwork() {
         title: "Application Submitted!",
         description: "Thank you for joining. We'll review your profile.",
       });
-      e.currentTarget.reset(); // Clear the form on success
+
+      // ** UPDATED CODE: Added defensive check before resetting **
+      if (e.currentTarget) {
+        e.currentTarget.reset(); // Clear the form on success
+      } else {
+        console.warn("Form element not found after submission, could not reset.");
+      }
+      // ** END UPDATED CODE **
 
 
     } catch (error: any) {
       console.error("Join network failed:", error);
       toast({
         title: "Submission Failed",
-        // Show the specific error message
         description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
@@ -139,12 +136,11 @@ export default function JoinNetwork() {
           <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Join Our Network of Solar Professionals
           </h1>
-           <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
             Connect with top EPC companies, grow your business, and be part of the solar revolution.
             Whether you're an I&C specialist, design engineer, or equipment provider, we have opportunities for you.
           </p>
-          {/* ... stats ... */}
-           <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-primary" />
               500+ Active Professionals
@@ -163,7 +159,7 @@ export default function JoinNetwork() {
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Left Column - Benefits & Process */}
-           <div>
+            <div>
             {/* Benefits */}
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-foreground mb-6">Why Join SolarConnect?</h2>
@@ -238,11 +234,11 @@ export default function JoinNetwork() {
                 <div>
                   <Label htmlFor="serviceType">Service Type</Label>
                    <select name="serviceType" id="serviceType" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1" required>
-                      <option value="" disabled >Select your service type</option>
-                      <option value="ic-team">I&C Team/Engineer</option>
-                      <option value="solar-design">Solar Design Engineer</option>
-                      <option value="equipment">Equipment Provider</option>
-                      <option value="consultant">Consultant</option>
+                     <option value="" disabled >Select your service type</option>
+                     <option value="ic-team">I&C Team/Engineer</option>
+                     <option value="solar-design">Solar Design Engineer</option>
+                     <option value="equipment">Equipment Provider</option>
+                     <option value="consultant">Consultant</option>
                    </select>
                 </div>
                 <div>
@@ -252,11 +248,11 @@ export default function JoinNetwork() {
                  <div>
                   <Label htmlFor="experience">Years of Experience</Label>
                    <select name="experience" id="experience" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1" required>
-                      <option value="" disabled >Select experience level</option>
-                      <option value="0-2">0-2 years</option>
-                      <option value="3-5">3-5 years</option>
-                      <option value="6-10">6-10 years</option>
-                      <option value="10+">10+ years</option>
+                     <option value="" disabled >Select experience level</option>
+                     <option value="0-2">0-2 years</option>
+                     <option value="3-5">3-5 years</option>
+                     <option value="6-10">6-10 years</option>
+                     <option value="10+">10+ years</option>
                    </select>
                 </div>
                 <div>
