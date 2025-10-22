@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 // Define your backend API URL
-const API_URL = 'http://localhost:5001/api'; // Make sure this is correct
+const API_URL = 'https://solar-crew-connect-main.onrender.com/api'; 
 
 const benefits = [
   {

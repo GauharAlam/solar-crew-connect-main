@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 // Removed: import { supabase } from "@/integrations/supabase/client";
 
 // Define your backend API URL
-const API_URL = 'http://localhost:5001/api'; // Or your backend's URL
+const API_URL = 'https://solar-crew-connect-main.onrender.com/api';
 
 interface EngineerProfile { // Keep or adjust this interface based on your Mongoose model
   _id: string; // MongoDB uses _id

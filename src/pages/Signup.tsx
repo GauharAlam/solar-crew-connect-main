@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 // REMOVED: import { supabase } from "@/integrations/supabase/client"; // <-- This line is removed
 
 // Define your backend API URL
-const API_URL = 'http://localhost:5001/api'; // Or your backend's URL
+const API_URL = 'https://solar-crew-connect-main.onrender.com/api';
 
 export default function Signup() {
   const [email, setEmail] = useState("");
