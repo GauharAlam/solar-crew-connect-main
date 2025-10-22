@@ -8,7 +8,7 @@ import { Header } from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute"; // Keep this import
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
-import FindServices from "./pages/FindServices";
+import FindServices from "./pages/FindServices"; // Make sure this is imported
 import JoinNetwork from "./pages/JoinNetwork";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -22,7 +22,7 @@ const queryClient = new QueryClient();
 const RouteLogger = () => {
   const location = useLocation();
   useEffect(() => {
-    console.log(`Mapsd to: ${location.pathname}`);
+    console.log(`Mapsd to: ${location.pathname}`); // Updated log message
   }, [location]);
   return null;
 };
@@ -44,7 +44,9 @@ const App = () => {
             <Route path="/how-it-works" element={<Index />} /> {/* Alias for Index */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            {/* Removed '/join' from public routes */}
+            {/* --- Moved Routes to Public --- */}
+            <Route path="/find-services" element={<FindServices />} />
+            <Route path="/services" element={<FindServices />} /> {/* Alias */}
             {/* Add any other explicitly public routes here */}
 
 
@@ -52,9 +54,8 @@ const App = () => {
             {/* Routes inside here require login */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/find-services" element={<FindServices />} />
-              <Route path="/services" element={<FindServices />} /> {/* Alias */}
-              <Route path="/join" element={<JoinNetwork />} /> {/* '/join' is now protected */}
+              {/* '/find-services' and '/services' were moved out */}
+              <Route path="/join" element={<JoinNetwork />} /> {/* '/join' remains protected */}
               <Route path="/engineer/:id" element={<EngineerProfile />} />
               {/* Add any other protected routes here */}
             </Route>
