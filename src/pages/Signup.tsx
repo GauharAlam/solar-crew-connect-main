@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 // REMOVED: import { supabase } from "@/integrations/supabase/client"; // <-- This line is removed
 
 // Define your backend API URL
@@ -129,10 +130,28 @@ export default function Signup() {
                 <SelectContent>
                   <SelectItem value="epc_company">EPC Company</SelectItem>
                   <SelectItem value="engineer">Engineer/Freelancer</SelectItem>
+                  <SelectItem value="tool_provider">Tool Provider</SelectItem>
+
                   {/* Add other types if necessary */}
                 </SelectContent>
               </Select>
             </div>
+             {/* Checkboxes */}
+                        <div className="space-y-2 pt-6 border-t border-gray-200">
+                          <div className="flex items-start space-x-3 p-1 bg-[#4CAFB8] bg-opacity-5 rounded-lg border border-[#4CAFB8] border-opacity-20">
+                            <Checkbox id="terms" name="terms" required className="mt-1 data-[state=checked]:bg-[#4CAFB8] data-[state=checked]:border-[#4CAFB8]" />
+                            <Label htmlFor="terms" className="text-sm text-gray-700 leading-relaxed cursor-pointer">
+                              I agree to the Terms of Service and Privacy Policy *
+                            </Label>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3 p-1 bg-[#4CAFB8] bg-opacity-5 rounded-lg border border-[#4CAFB8] border-opacity-20">
+                            <Checkbox id="marketing" name="marketing" className="mt-1 data-[state=checked]:bg-[#4CAFB8] data-[state=checked]:border-[#4CAFB8]" />
+                            <Label htmlFor="marketing" className="text-sm text-gray-700 leading-relaxed cursor-pointer">
+                              I'd like to receive updates about new opportunities and platform features
+                            </Label>
+                          </div>
+                        </div>
             {/* Submit Button */}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"}

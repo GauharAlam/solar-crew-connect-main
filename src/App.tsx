@@ -15,6 +15,8 @@ import Signup from "./pages/Signup";
 import EngineerProfile from "./pages/EngineerProfile";
 import NotFound from "./pages/NotFound";
 import React, { useEffect } from "react";
+import EditProfile from "./pages/EditProfile";
+import Setting from "./pages/Setting";
 
 const queryClient = new QueryClient();
 
@@ -28,9 +30,12 @@ const RouteLogger = () => {
 };
 
 const App = () => {
-  console.log("App component rendering. Checking token:", localStorage.getItem('authToken'));
+  console.log(
+    "App component rendering. Checking token:",
+    localStorage.getItem("authToken")
+  );
 
-  return(
+  return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
@@ -41,25 +46,27 @@ const App = () => {
           <Routes>
             {/* --- Public Routes --- */}
             <Route path="/" element={<Index />} /> {/* Index page is public */}
-            <Route path="/how-it-works" element={<Index />} /> {/* Alias for Index */}
+            <Route path="/how-it-works" element={<Index />} />{" "}
+            {/* Alias for Index */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             {/* --- Moved Routes to Public --- */}
             <Route path="/find-services" element={<FindServices />} />
             <Route path="/services" element={<FindServices />} /> {/* Alias */}
             {/* Add any other explicitly public routes here */}
-
-
             {/* --- Protected Routes --- */}
             {/* Routes inside here require login */}
             <Route element={<ProtectedRoute />}>
+              {/* edit profile for route */}
+              <Route path="/edit-profile" element={<EditProfile />} />
+              <Route path="/settings" element={<Setting />} />
               <Route path="/dashboard" element={<Dashboard />} />
               {/* '/find-services' and '/services' were moved out */}
-              <Route path="/join" element={<JoinNetwork />} /> {/* '/join' remains protected */}
+              <Route path="/join" element={<JoinNetwork />} />{" "}
+              {/* '/join' remains protected */}
               <Route path="/engineer/:id" element={<EngineerProfile />} />
               {/* Add any other protected routes here */}
             </Route>
-
             {/* --- Catch-all Not Found Route --- */}
             {/* Make sure this is the LAST route */}
             <Route path="*" element={<NotFound />} />
@@ -68,5 +75,5 @@ const App = () => {
       </TooltipProvider>
     </QueryClientProvider>
   );
-}
+};
 export default App;
