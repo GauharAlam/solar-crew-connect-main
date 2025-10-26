@@ -28,7 +28,7 @@ export default function Setting() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50 py-12 px-4 sm:px-6 lg:px-8 mt-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50 py-12 px-4 sm:px-6 lg:px-8 mt-16 md:mt-10">
       <style>{`
         @keyframes fadeInDown {
           from {
@@ -65,56 +65,75 @@ export default function Setting() {
           animation: slideInUp 0.6s ease-out 0.2s backwards;
         }
 
+        /* Fixed Toggle Switch - Fully Responsive */
         .toggle-switch {
           position: relative;
-          width: 60px;
-          height: 30px;
+          display: inline-block;
+          width: 52px;
+          height: 28px;
           background-color: #e5e7eb;
-          border-radius: 15px;
+          border-radius: 999px;
           cursor: pointer;
-          transition: all 0.3s ease;
+          transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+          flex-shrink: 0;
+          border: none;
+          padding: 0;
+          outline: none;
         }
 
         .toggle-switch.active {
           background: linear-gradient(135deg, #4CAFB8 0%, #3d9ea6 100%);
+          box-shadow: 0 0 0 3px rgba(76, 175, 184, 0.1);
         }
 
         .toggle-slider {
           position: absolute;
-          top: 3px;
-          left: 3px;
+          top: 2px;
+          left: 2px;
           width: 24px;
           height: 24px;
           background-color: white;
           border-radius: 50%;
-          transition: all 0.3s ease;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .toggle-switch.active .toggle-slider {
-          left: 33px;
+          left: calc(100% - 26px);
+          box-shadow: 0 2px 8px rgba(76, 175, 184, 0.2);
+        }
+
+        .toggle-switch:hover .toggle-slider {
+          box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-switch.active:hover .toggle-slider {
+          box-shadow: 0 3px 10px rgba(76, 175, 184, 0.25);
         }
       `}</style>
 
       {/* Floating Background Elements */}
-      <div className="absolute top-20 left-20 w-32 h-32 bg-[#4CAFB8] opacity-10 rounded-full blur-3xl" style={{ animation: 'float 6s ease-in-out infinite' }}></div>
-      <div className="absolute bottom-40 right-40 w-40 h-40 bg-teal-400 opacity-10 rounded-full blur-3xl" style={{ animation: 'float 6s ease-in-out infinite 2s' }}></div>
+      <div className="fixed top-20 left-20 w-32 h-32 bg-[#4CAFB8] opacity-10 rounded-full blur-3xl pointer-events-none" style={{ animation: 'float 6s ease-in-out infinite' }}></div>
+      <div className="fixed bottom-40 right-40 w-40 h-40 bg-teal-400 opacity-10 rounded-full blur-3xl pointer-events-none" style={{ animation: 'float 6s ease-in-out infinite 2s' }}></div>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-8 animate-fade-down">
           <div className="flex items-center space-x-3 mb-2">
-            <div className="p-3 bg-gradient-to-br from-[#4CAFB8] to-teal-500 rounded-2xl shadow-lg">
+            <div className="p-3 bg-gradient-to-br from-[#4CAFB8] to-teal-500 rounded-2xl shadow-lg flex-shrink-0">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                 Settings
               </h1>
-              <p className="text-gray-600 mt-1">Manage your account preferences</p>
+              <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your account preferences</p>
             </div>
           </div>
         </div>
@@ -123,35 +142,35 @@ export default function Setting() {
         <Card className="animate-slide-up shadow-2xl border-0 overflow-hidden relative">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4CAFB8] via-teal-400 to-[#4CAFB8]"></div>
           
-          <CardHeader className="bg-gradient-to-b from-white to-slate-50 pb-6">
+          <CardHeader className="bg-gradient-to-b from-white to-slate-50 pb-4 sm:pb-6">
             <div className="flex items-center space-x-2">
-              <div className="p-2 bg-[#4CAFB8] bg-opacity-10 rounded-lg">
+              <div className="p-2 bg-[#4CAFB8] bg-opacity-10 rounded-lg flex-shrink-0">
                 <User className="w-5 h-5 text-[#4CAFB8]" />
               </div>
               <div>
-                <CardTitle className="text-2xl text-gray-900">Profile Visibility</CardTitle>
-                <CardDescription className="mt-1">Control how others see your availability</CardDescription>
+                <CardTitle className="text-xl sm:text-2xl text-gray-900">Profile Visibility</CardTitle>
+                <CardDescription className="mt-1 text-xs sm:text-sm">Control how others see your availability</CardDescription>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className="p-8 space-y-6">
+          <CardContent className="p-4 sm:p-8 space-y-6">
             {/* Availability Status Toggle */}
-            <div className="p-6 bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-gray-200 hover:border-[#4CAFB8] hover:border-opacity-30 transition-all duration-300">
-              <div className="flex items-center justify-between">
-                <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-xl transition-all duration-300 ${availableStatus ? 'bg-[#4CAFB8] bg-opacity-10' : 'bg-gray-100'}`}>
+            <div className="p-4 sm:p-6 bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-gray-200 hover:border-[#4CAFB8] hover:border-opacity-30 transition-all duration-300">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-start space-x-3 sm:space-x-4 flex-1 min-w-0">
+                  <div className={`p-3 rounded-xl transition-all duration-300 flex-shrink-0 ${availableStatus ? 'bg-[#4CAFB8] bg-opacity-10' : 'bg-gray-100'}`}>
                     {availableStatus ? (
-                      <Eye className="w-6 h-6 text-[#4CAFB8]" />
+                      <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-[#4CAFB8]" />
                     ) : (
-                      <EyeOff className="w-6 h-6 text-gray-500" />
+                      <EyeOff className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" />
                     )}
                   </div>
-                  <div className="flex-1">
-                    <Label className="text-lg font-semibold text-gray-900 cursor-pointer" onClick={handleToggle}>
+                  <div className="flex-1 min-w-0">
+                    <Label className="text-base sm:text-lg font-semibold text-gray-900 cursor-pointer block" onClick={handleToggle}>
                       Show Available Status
                     </Label>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-xs sm:text-sm text-gray-600 mt-1">
                       {availableStatus 
                         ? "Your availability status is visible to others" 
                         : "Your availability status is hidden from others"}
@@ -168,26 +187,37 @@ export default function Setting() {
                   </div>
                 </div>
 
-                {/* Custom Toggle Switch */}
-                <div 
-                  className={`toggle-switch ${availableStatus ? 'active' : ''}`}
-                  onClick={handleToggle}
-                >
-                  <div className="toggle-slider"></div>
+                {/* Fixed Toggle Switch */}
+                <div className="flex justify-center sm:justify-end sm:ml-auto">
+                  <div 
+                    className={`toggle-switch ${availableStatus ? 'active' : ''}`}
+                    onClick={handleToggle}
+                    role="switch"
+                    aria-checked={availableStatus}
+                    aria-label="Toggle availability status"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        handleToggle();
+                      }
+                    }}
+                  >
+                    <div className="toggle-slider"></div>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Info Card */}
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <div className="p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-xl">
               <div className="flex items-start space-x-3">
-                <div className="p-1.5 bg-blue-100 rounded-lg mt-0.5">
+                <div className="p-1.5 bg-blue-100 rounded-lg mt-0.5 flex-shrink-0">
                   <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-blue-800 font-medium">Privacy Information</p>
+                  <p className="text-xs sm:text-sm text-blue-800 font-medium">Privacy Information</p>
                   <p className="text-xs text-blue-700 mt-1">
                     When your status is visible, other users can see if you're currently available for projects and collaborations.
                   </p>
@@ -200,11 +230,11 @@ export default function Setting() {
               <Button 
                 onClick={handleSave}
                 disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-[#4CAFB8] to-teal-500 hover:from-[#3d9ea6] hover:to-teal-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                className="w-full h-11 sm:h-12 bg-gradient-to-r from-[#4CAFB8] to-teal-500 hover:from-[#3d9ea6] hover:to-teal-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 active:scale-95 disabled:opacity-80 text-sm sm:text-base"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -212,7 +242,7 @@ export default function Setting() {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 mr-2" />
+                    <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Save Changes
                   </span>
                 )}
@@ -222,8 +252,8 @@ export default function Setting() {
         </Card>
 
         {/* Additional Info */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
+        <div className="mt-8 text-center">
+          <p className="text-xs sm:text-sm text-gray-500">
             More settings options coming soon...
           </p>
         </div>
