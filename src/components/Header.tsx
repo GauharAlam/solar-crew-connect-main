@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Label } from "recharts";
 
 interface UserInfo {
   id: string;
@@ -67,8 +68,9 @@ export const Header = () => {
   };
 
   const navItems = [
+    { label: "Home", href: "/" },
     { label: "Services", href: "/services" },
-    { label: "How It Works", href: "/" },
+    { label: "How It Works", href: "/how-it-works" },
     ...(isLoggedIn ? [{ label: "Dashboard", href: "/dashboard" }] : []),
   ];
 
@@ -152,7 +154,7 @@ export const Header = () => {
                 SolarConnect
               </span>
             </Link>
-
+               
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8 mx-auto">
               {navItems.map((item) => (
@@ -255,7 +257,7 @@ export const Header = () => {
                     <div className="border-b border-gray-100" />
 
                     <DropdownMenuItem
-                      onClick={() => navigate("/profile")}
+                      onClick={() => navigate(`user/${userInfo?.id}/view-profile`)}
                       className="cursor-pointer px-5 py-3 text-gray-700 hover:text-[#4CAFB8] hover:bg-[#4CAFB8]/5 font-medium transition-all rounded-none"
                     >
                       <User className="mr-3 h-4 w-4" />

@@ -17,6 +17,8 @@ import NotFound from "./pages/NotFound";
 import React, { useEffect } from "react";
 import EditProfile from "./pages/EditProfile";
 import Setting from "./pages/Setting";
+import { HowItWorks } from "./components/HowItWorks";
+import ViewProfile from "./pages/ViewProfile";
 
 const queryClient = new QueryClient();
 
@@ -46,10 +48,11 @@ const App = () => {
           <Routes>
             {/* --- Public Routes --- */}
             <Route path="/" element={<Index />} /> {/* Index page is public */}
-            <Route path="/how-it-works" element={<Index />} />{" "}
             {/* Alias for Index */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/how-it-works" element= {<HowItWorks />} />
+            <Route path="/engineers" element= {<EngineerProfile />} />
             {/* --- Moved Routes to Public --- */}
             <Route path="/find-services" element={<FindServices />} />
             <Route path="/services" element={<FindServices />} /> {/* Alias */}
@@ -59,6 +62,7 @@ const App = () => {
             <Route element={<ProtectedRoute />}>
               {/* edit profile for route */}
               <Route path="/edit-profile" element={<EditProfile />} />
+              <Route path="/user/:id/view-profile" element={<ViewProfile />} />
               <Route path="/settings" element={<Setting />} />
               <Route path="/dashboard" element={<Dashboard />} />
               {/* '/find-services' and '/services' were moved out */}
